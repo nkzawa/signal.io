@@ -1,0 +1,29 @@
+{
+  "name": "signal.io",
+  "version": "0.0.0",
+  "description": "A realtime application framework for Node.js",
+  "author": "Naoyuki Kanezawa <naoyuki.kanezawa@gmail.com>",
+  "keywords": [
+    "real-time", "framework", "websocket", "socket.io", "connect", "api", "rest"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/nkzawa/signal.io.git"
+  },
+  "scripts": {
+    "test": "node_modules/.bin/mocha --reporter dot"
+  },
+  "dependencies": {
+    "socket.io": "nkzawa/socket.io",
+    "socket.io-bundle": "0.0.2",
+    "socket.io-stream": "*",
+    "debug": "*"
+  },
+  "devDependencies": {
+    "socket.io-client": "nkzawa/socket.io-client",
+    "cookie-signature": "1.0.1",
+    "mocha": "*",
+    "chai": "*",
+    "async": "*"
+  }
+}
