@@ -1,6 +1,6 @@
 {
   "name": "signal.io",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "A realtime application framework for Node.js",
   "author": "Naoyuki Kanezawa <naoyuki.kanezawa@gmail.com>",
   "keywords": [
