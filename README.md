@@ -15,12 +15,12 @@ io.use(signal.session('my secret'));
 io.connect('/posts/:postId', function(socket) {
   console.log(socket.params.postId);
 
-  socket.on('read', function(socket, req, res) {
+  socket.on('read', function(req, res) {
     var post = 'A post';
     res.send(null, post);
   });
 
-  socket.broadcast.on('create', function(socket, req, res) {
+  socket.broadcast.on('create', function(req, res) {
     var newPost = req.body;
 
     // broadcast to all sockets joined in the same namespace.
@@ -32,7 +32,9 @@ server.listen(3000);
 ```
 
 ### Client:
-```js
+Use Socket.IO as the client.
+
+```html
 <script src="/signal.io/socket.io.js"></script>
 <script>
 var socket = io('http://localhost:3000/posts/10', {path: '/signal.io'});

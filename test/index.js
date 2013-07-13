@@ -35,13 +35,13 @@ describe('signal.io', function() {
   describe('event middleware', function() {
     it('should work', function(done) {
       this.io.connect(function(socket) {
-        socket.use(function(socket, req, res, next) {
+        socket.use(function(req, res, next) {
           req.test = 'test';
           next();
         });
         socket.use(signal.errorHandler());
 
-        socket.on('foo', function(socket, req, res) {
+        socket.on('foo', function(req, res) {
           expect(req.body).to.eql('hi');
           expect(req.test).to.eql('test');
           done();
@@ -58,7 +58,7 @@ describe('signal.io', function() {
   describe('connection', function() {
     it('should work', function(done) {
       this.io.connect('/messages', function(socket) {
-        socket.on('index', function(socket, req, res) {
+        socket.on('index', function(req, res) {
           res.send(null, ['foo', 'bar']);
         });
       });
@@ -74,7 +74,7 @@ describe('signal.io', function() {
     });
 
     it('should be able to broadcast', function(done) {
-      function create(socket, req, res) {
+      function create(req, res) {
         var text = req.body;
         res.send(null, {id: 1, text: text});
       }

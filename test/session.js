@@ -16,7 +16,7 @@ describe('session', function() {
       this.io.use(signal.cookieParser())
       this.io.use(signal.session({secret: 'my secret'}));
       this.io.connect(function(socket) {
-        socket.on('message', function(socket, req, res) {
+        socket.on('message', function(req, res) {
           var _req = socket.request
             , session = _req.session;
           session.count = session.count || 0;
@@ -45,7 +45,7 @@ describe('session', function() {
       this.io.use(signal.cookieParser())
       this.io.use(signal.session({secret: 'my secret'}));
       this.io.connect(function(socket) {
-        socket.on('message', function(socket, req, res) {
+        socket.on('message', function(req, res) {
           var _req = socket.request
             , session = _req.session;
 
