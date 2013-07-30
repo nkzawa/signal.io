@@ -73,14 +73,41 @@ describe('signal.io', function() {
       });
     });
 
-    it('should be able to broadcast', function(done) {
-      function create(req, res) {
-        var text = req.body;
-        res.send(null, {id: 1, text: text});
+    it('should be able to broadcast with a flag of sockets', function(done) {
+      this.io.connect('/messages', function(socket) {
+        socket.broadcast.on('create', function(req, res) {
+          var text = req.body;
+          res.send(null, {id: 1, text: text});
+        });
+      });
+
+      var socket1 = client('/messages');
+      var socket2 = client('/messages');
+      var end = times(2, done);
+
+      socket2.on('create', function(body, headers) {
+        expect(body).to.eql({id: 1, text: 'woot'});
+        end();
+      });
+
+      function onconnect(socket, callback) {
+        socket.on('connect', callback);
       }
 
+      async.each([socket1, socket2], onconnect, function(err) {
+        socket1.emit('create', 'woot', function(err, body, headers) {
+          expect(body).to.eql({id: 1, text: 'woot'});
+          end();
+        });
+      });
+    });
+
+    it('should be able to broadcast with a flag of responses', function(done) {
       this.io.connect('/messages', function(socket) {
-        socket.broadcast.on('create', create);
+        socket.on('create', function(req, res) {
+          var text = req.body;
+          res.broadcast.send(null, {id: 1, text: text});
+        });
       });
 
       var socket1 = client('/messages');
