@@ -15,6 +15,7 @@ describe('signal.io', function() {
     expect(signal.cookieParser).to.be.a('function');
     expect(signal.session).to.be.a('function');
     expect(signal.csrf).to.be.a('function');
+    expect(signal.logger).to.be.a('function');
   });
 
   it('should set default path', function(done) {
