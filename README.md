@@ -1,14 +1,41 @@
 # Signal.IO
 [![Build Status](https://travis-ci.org/nkzawa/signal.io.png?branch=master)](https://travis-ci.org/nkzawa/signal.io)
+[![NPM version](https://badge.fury.io/js/signal.io.png)](http://badge.fury.io/js/signal.io)
 
-Signal.IO is a realtime web application framwrork for creating Web API based on Websocket instead of Http.
+Signal.IO is a realtime application framewrork for building Web API based on WebSocket instead of HTTP.
 
-### Server:
 ```js
 var signal = require('signal.io');
 var server = require('http').Server();
 var io = signal(server);
 
+io.connect('/', function(socket) {
+  socket.on('get', function(req, res) {
+    res.send('Hello World');
+  });
+});
+
+server.listen(3000);
+```
+
+## Installation
+    $ npm install signal.io
+
+## Features
+* Built on [Socket.IO](https://github.com/learnboost/socket.io) v1.0
+* Parameterized namespace routing
+* Bundled middlewares
+* Easy broadcasting
+
+## Example
+
+**Server:**
+```js
+var signal = require('signal.io');
+var server = require('http').Server();
+var io = signal(server);
+
+// set middlewares
 io.use(signal.cookieParser());
 io.use(signal.session('my secret'));
 
@@ -17,21 +44,22 @@ io.connect('/posts/:postId', function(socket) {
 
   socket.on('read', function(req, res) {
     var post = 'A post';
-    res.send(null, post);
+    res.send(post);
   });
 
-  socket.broadcast.on('create', function(req, res) {
+  socket.on('create', function(req, res) {
     var newPost = req.body;
 
-    // broadcast to all sockets joined in the same namespace.
-    res.send(null, newPost);
+    // broadcast data to all sockets joined in the same namespace.
+    res.broadcast.send(newPost);
   });
 });
 
 server.listen(3000);
 ```
 
-### Client:
+**Client:**
+
 Use Socket.IO as the client.
 
 ```html
