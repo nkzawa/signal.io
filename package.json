@@ -11,7 +11,7 @@
     "url": "git://github.com/nkzawa/signal.io.git"
   },
   "scripts": {
-    "test": "node_modules/.bin/mocha --reporter dot"
+    "test": "make test"
   },
   "dependencies": {
     "socket.io": "nkzawa/socket.io",

@@ -64,7 +64,7 @@ describe('session', function() {
       socket1.on('connect', function() {
         socket1.send(function(err, body, headers) {
           expect(body).to.eql(1);
-          socket2 = client('/', {headers: {cookie: headers['set-cookie']}});
+          var socket2 = client('/', {headers: {cookie: headers['set-cookie']}});
           socket2.on('connect', function() {
             socket1.send(function(err, body) {
               expect(body).to.eql(2);
