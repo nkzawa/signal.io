@@ -21,7 +21,8 @@ describe('session', function() {
             , session = _req.session;
           session.count = session.count || 0;
           session.count++;
-          res.send(null, session.count, {'Set-Cookie': sessionCookie(_req, 'my secret')});
+          res.set('Set-Cookie', sessionCookie(_req, 'my secret'));
+          res.send(null, session.count);
         });
       });
 
@@ -30,7 +31,7 @@ describe('session', function() {
         socket.emit('message', function(err, body, headers) {
           expect(body).to.eql(1);
 
-          socket = client('/', {headers: {cookie: headers['Set-Cookie']}});
+          socket = client('/', {headers: {cookie: headers['set-cookie']}});
           socket.on('connect', function() {
             socket.emit('message', function(err, body) {
               expect(body).to.eql(2);
@@ -53,7 +54,8 @@ describe('session', function() {
           session.count++;
           _req.session.save(function(err) {
             if (err) throw err;
-            res.send(null, session.count, {'Set-Cookie': sessionCookie(_req, 'my secret')});
+            res.set('Set-Cookie', sessionCookie(_req, 'my secret'));
+            res.send(null, session.count);
           });
         });
       });
@@ -62,7 +64,7 @@ describe('session', function() {
       socket1.on('connect', function() {
         socket1.send(function(err, body, headers) {
           expect(body).to.eql(1);
-          socket2 = client('/', {headers: {cookie: headers['Set-Cookie']}});
+          socket2 = client('/', {headers: {cookie: headers['set-cookie']}});
           socket2.on('connect', function() {
             socket1.send(function(err, body) {
               expect(body).to.eql(2);

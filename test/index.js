@@ -59,7 +59,7 @@ describe('signal.io', function() {
     it('should work', function(done) {
       this.io.connect('/messages', function(socket) {
         socket.on('index', function(req, res) {
-          res.send(null, ['foo', 'bar']);
+          res.send(['foo', 'bar']);
         });
       });
 
@@ -77,7 +77,7 @@ describe('signal.io', function() {
       this.io.connect('/messages', function(socket) {
         socket.broadcast.on('create', function(req, res) {
           var text = req.body;
-          res.send(null, {id: 1, text: text});
+          res.send({id: 1, text: text});
         });
       });
 
@@ -106,7 +106,7 @@ describe('signal.io', function() {
       this.io.connect('/messages', function(socket) {
         socket.on('create', function(req, res) {
           var text = req.body;
-          res.broadcast.send(null, {id: 1, text: text});
+          res.broadcast.send({id: 1, text: text});
         });
       });
 
