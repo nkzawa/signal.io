@@ -9,6 +9,8 @@ describe('signal.io', function() {
     expect(signal.Socket).to.be.a('function');
     expect(signal.Route).to.be.a('function');
     expect(signal.Router).to.be.a('function');
+    expect(signal.Request).to.be.a('function');
+    expect(signal.Response).to.be.a('function');
   });
 
   it('should export middlewares', function(){

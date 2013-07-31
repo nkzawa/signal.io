@@ -1,6 +1,6 @@
 
 var expect = require('chai').expect
-  , Response = require('../lib/response');
+  , Response = require('../').Response;
 
 describe('Response', function() {
   describe('.get(field)', function() {
@@ -58,6 +58,14 @@ describe('Response', function() {
       var res = new Response({});
       res.set({ ETag: 123 });
       expect(res.get('ETag')).to.equal('123');
+    });
+  });
+
+  describe('.status(code)', function() {
+    it('should set the response .statusCode', function() {
+      var res = new Response({});
+      res.status(201);
+      expect(res.statusCode).to.equal(201);
     });
   });
 });
