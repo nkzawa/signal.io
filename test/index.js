@@ -186,6 +186,7 @@ describe('signal.io', function() {
           expect(req.method).to.eql('foo');
           expect(req.body).to.eql('body');
           expect(req.headers).to.eql({header: 'hi'});
+          expect(req.request).to.equal(socket.request);
           done();
         });
       });
