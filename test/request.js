@@ -1,71 +1,70 @@
 
 var expect = require('chai').expect
-  , Response = require('../').Response;
+  , Request = require('../').Request;
 
-describe('Response', function() {
+
+describe('Request', function() {
   describe('.get(field)', function() {
-    it('should get the response header field', function() {
-      var res = new Response({});
-      res.setHeader('Content-Type', 'text/x-foo');
-      expect(res.get('Content-Type')).to.equal('text/x-foo');
-      expect(res.get('Content-type')).to.equal('text/x-foo');
-      expect(res.get('content-type')).to.equal('text/x-foo');
+    it('should return the header field value', function() {
+      var req = new Request({request: {}});
+      expect(req.get('Something-Else')).to.be.undefined;
+
+      req.headers['Content-Type'.toLowerCase()] = 'application/json';
+      expect(req.get('Content-Type')).to.equal('application/json');
     });
   });
 
-  describe('.set(field, value)', function() {
-    it('should set the response header field', function() {
-      var res = new Response({});
-      res.set('Content-Type', 'text/x-foo');
-      expect(res.getHeader('Content-Type')).to.equal('text/x-foo');
-    });
-
-    it('should coerce to a string', function() {
-      var res = new Response({});
-      res.set('ETag', 123);
-      expect(res.get('ETag')).to.equal('123');
+  describe('.param(name, default)', function() {
+    it('should use the default value unless defined', function() {
+      var req = new Request({request: {}});
+      expect(req.param('name', 'tj')).to.equal('tj');
     });
   });
 
-  describe('.set(field, values)', function() {
-    it('should set multiple response header fields', function() {
-      var res = new Response({});
-      res.set('Set-Cookie', ["type=ninja", "language=javascript"]);
-      expect(JSON.stringify(res.get('Set-Cookie')))
-          .to.equal('["type=ninja","language=javascript"]');
+  describe('.param(name)', function() {
+    it('should check req.query', function() {
+      var req = new Request({request: {query: {name: 'tj'}}});
+      expect(req.param('name')).to.equal('tj');
     });
 
-    it('should coerce to an array of strings', function() {
-      var res = new Response({});
-      res.set('ETag', [123, 456]);
-      expect(JSON.stringify(res.get('ETag'))).to.equal('["123","456"]');
-    });
-  });
-
-  describe('.set(object)', function() {
-    it('should set multiple fields', function() {
-      var res = new Response({});
-      res.set({
-        'X-Foo': 'bar',
-        'X-Bar': 'baz'
-      });
-
-      expect(res.getHeader('X-Foo')).to.equal('bar');
-      expect(res.getHeader('X-Bar')).to.equal('baz');
+    it('should check req.body', function() {
+      var req = new Request({request: {}});
+      req.body = {name: 'tj'}
+      expect(req.param('name')).to.equal('tj');
     });
 
-    it('should coerce to a string', function() {
-      var res = new Response({});
-      res.set({ ETag: 123 });
-      expect(res.get('ETag')).to.equal('123');
+    it('should check req.params', function() {
+      var req = new Request({request: {}, params: {name: 'tj'}});
+      expect(req.param('filter') + req.param('name')).to.equal('undefinedtj');
     });
   });
 
-  describe('.status(code)', function() {
-    it('should set the response .statusCode', function() {
-      var res = new Response({});
-      res.status(201);
-      expect(res.statusCode).to.equal(201);
+  describe('.path', function() {
+    it('should return the namespace', function() {
+      var req = new Request({request: {}, nsp: {name: '/login'}});
+      expect(req.path).to.equal('/login');
+    });
+  });
+
+  describe('.query', function(){
+    it('should default to {}', function() {
+      var req = new Request({request: {query: {}}});
+      expect(req.query).to.eql({});
+    });
+
+    it('should contain the parsed query-string', function() {
+      var req = new Request({request: {query: {user: {name: 'tj'}}}});
+      expect(req.query).to.eql({user: {name: 'tj'}});
+    });
+  });
+
+  describe('.route', function(){
+    it('should be the executed Route', function() {
+      var req = new Request({request: {}, route: {path: '/user/:id/:op?'}});
+      expect(req.route.path).to.equal('/user/:id/:op?');
+
+      var req = new Request({request: {}, route: {path: '/user/:id/:edit?'}});
+      expect(req.route.path).to.equal('/user/:id/:edit?');
     });
   });
 });
