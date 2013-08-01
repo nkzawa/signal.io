@@ -1,70 +1,150 @@
 
 var expect = require('chai').expect
-  , Request = require('../').Request;
+  , Request = require('../').Request
+  , support = require('./support')
+  , client = support.client;
 
 
 describe('Request', function() {
-  describe('.get(field)', function() {
-    it('should return the header field value', function() {
-      var req = new Request({request: {}});
-      expect(req.get('Something-Else')).to.be.undefined;
+  beforeEach(support.startServer);
+  afterEach(support.stopServer);
 
-      req.headers['Content-Type'.toLowerCase()] = 'application/json';
-      expect(req.get('Content-Type')).to.equal('application/json');
+  describe('.get(field)', function() {
+    it('should return the header field value', function(done) {
+      this.io.connect(function(socket) {
+        socket.on('foo', function(req, res) {
+          expect(req.get('Something-Else')).to.be.undefined;
+          expect(req.get('Content-Type')).to.equal('application/json');
+          done();
+        });
+      });
+
+      var socket = client();
+      socket.on('connect', function() {
+        socket.emit('foo', null, {'Content-Type': 'application/json'});
+      });
     });
   });
 
   describe('.param(name, default)', function() {
-    it('should use the default value unless defined', function() {
-      var req = new Request({request: {}});
-      expect(req.param('name', 'tj')).to.equal('tj');
+    it('should use the default value unless defined', function(done) {
+      this.io.connect(function(socket) {
+        socket.on('foo', function(req, res) {
+          expect(req.param('name', 'tj')).to.equal('tj');
+          done();
+        });
+      });
+
+      var socket = client();
+      socket.on('connect', function() {
+        socket.emit('foo');
+      });
     });
   });
 
   describe('.param(name)', function() {
-    it('should check req.query', function() {
-      var req = new Request({request: {query: {name: 'tj'}}});
-      expect(req.param('name')).to.equal('tj');
+    it('should check req.query', function(done) {
+      this.io.connect(function(socket) {
+        socket.on('foo', function(req, res) {
+          expect(req.param('name')).to.equal('tj');
+          done();
+        });
+      });
+
+      var socket = client('/?name=tj');
+      socket.on('connect', function() {
+        socket.emit('foo');
+      });
     });
 
-    it('should check req.body', function() {
-      var req = new Request({request: {}});
-      req.body = {name: 'tj'}
-      expect(req.param('name')).to.equal('tj');
+    it('should check req.body', function(done) {
+      this.io.connect(function(socket) {
+        socket.on('foo', function(req, res) {
+          expect(req.param('name')).to.equal('tj');
+          done();
+        });
+      });
+
+      var socket = client();
+      socket.on('connect', function() {
+        socket.emit('foo', {name: 'tj'});
+      });
     });
 
-    it('should check req.params', function() {
-      var req = new Request({request: {}, params: {name: 'tj'}});
-      expect(req.param('filter') + req.param('name')).to.equal('undefinedtj');
+    it('should check req.params', function(done) {
+      this.io.connect('/user/:name', function(socket) {
+        socket.on('foo', function(req, res) {
+          expect(req.param('filter') + req.param('name')).to.equal('undefinedtj');
+          done();
+        });
+      });
+
+      var socket = client('/user/tj');
+      socket.on('connect', function() {
+        socket.emit('foo');
+      });
     });
   });
 
   describe('.path', function() {
-    it('should return the namespace', function() {
-      var req = new Request({request: {}, nsp: {name: '/login'}});
-      expect(req.path).to.equal('/login');
+    it('should return the namespace', function(done) {
+      this.io.connect('/login', function(socket) {
+        socket.on('foo', function(req, res) {
+          expect(req.path).to.equal('/login');
+          done();
+        });
+      });
+
+      var socket = client('/login?redirect=/post/1/comments');
+      socket.on('connect', function() {
+        socket.emit('foo');
+      });
     });
   });
 
-  describe('.query', function(){
-    it('should default to {}', function() {
-      var req = new Request({request: {query: {}}});
-      expect(req.query).to.eql({});
+  describe('.query', function() {
+    it('should default to {}', function(done) {
+      this.io.connect(function(socket) {
+        socket.on('foo', function(req, res) {
+          expect(req.query).to.eql({EIO: '2', transport: 'polling'});
+          done();
+        });
+      });
+
+      var socket = client();
+      socket.on('connect', function() {
+        socket.emit('foo');
+      });
     });
 
-    it('should contain the parsed query-string', function() {
-      var req = new Request({request: {query: {user: {name: 'tj'}}}});
-      expect(req.query).to.eql({user: {name: 'tj'}});
+    it('should contain the parsed query-string', function(done) {
+      this.io.connect(function(socket) {
+        socket.on('foo', function(req, res) {
+          expect(req.query).to.have.property('user[name]', 'tj');
+          done();
+        });
+      });
+
+      var socket = client('/?user[name]=tj');
+      socket.on('connect', function() {
+        socket.emit('foo');
+      });
     });
   });
 
-  describe('.route', function(){
-    it('should be the executed Route', function() {
-      var req = new Request({request: {}, route: {path: '/user/:id/:op?'}});
-      expect(req.route.path).to.equal('/user/:id/:op?');
+  describe('.route', function() {
+    it('should be the executed Route', function(done) {
+      this.io.connect('/user/:id/:op?', function(socket) {
+        socket.on('foo', function(req, res) {
+          expect(req.route.path).to.equal('/user/:id/:op?');
+          done();
+        });
+      });
 
-      var req = new Request({request: {}, route: {path: '/user/:id/:edit?'}});
-      expect(req.route.path).to.equal('/user/:id/:edit?');
+      var socket = client('/user/12/edit');
+      socket.on('connect', function() {
+        socket.emit('foo');
+      });
     });
   });
 });
