@@ -178,41 +178,6 @@ describe('signal.io', function() {
       socket.on('message', done);
     });
   });
-
-  describe('request', function() {
-    it('should normalize properties', function(done) {
-      this.io.connect(function(socket) {
-        socket.on('foo', function(req, res) {
-          expect(req.method).to.eql('foo');
-          expect(req.body).to.eql('body');
-          expect(req.headers).to.eql({header: 'hi'});
-          expect(req.request).to.equal(socket.request);
-          done();
-        });
-      });
-
-      var socket = client();
-      socket.on('connect', function() {
-        socket.emit('foo', 'body', {header: 'hi'});
-      });
-    });
-  });
-
-  describe('response', function() {
-    it('should normalize properties', function(done) {
-      this.io.connect(function(socket) {
-        socket.on('foo', function(req, res) {
-          expect(res.method).to.eql('foo');
-          done();
-        });
-      });
-
-      var socket = client();
-      socket.on('connect', function() {
-        socket.emit('foo');
-      });
-    });
-  });
 });
 
 

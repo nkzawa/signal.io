@@ -9,6 +9,29 @@ describe('Request', function() {
   beforeEach(support.startServer);
   afterEach(support.stopServer);
 
+  describe('properties', function() {
+    it('should be normalized', function(done) {
+      this.io.connect(function(socket) {
+        socket.on('foo', function(req, res) {
+          expect(req.method).to.eql('foo');
+          expect(req.body).to.eql('body');
+          expect(req.headers).to.eql({header: 'hi'});
+          expect(req.socket).to.equal(socket);
+          expect(req.request).to.equal(socket.request);
+          expect(req.query).to.equal(socket.request.query);
+          expect(req.route).to.equal(socket.route);
+          expect(req.params).to.equal(socket.params);
+          done();
+        });
+      });
+
+      var socket = client();
+      socket.on('connect', function() {
+        socket.emit('foo', 'body', {header: 'hi'});
+      });
+    });
+  });
+
   describe('.get(field)', function() {
     it('should return the header field value', function(done) {
       this.io.connect(function(socket) {
