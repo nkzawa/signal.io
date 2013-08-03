@@ -23,7 +23,8 @@ server.listen(3000);
 
 ## Features
 * Built on [Socket.IO](https://github.com/learnboost/socket.io) v1.0
-* Parameterized namespace routing
+* [Express](https://github.com/visionmedia/express) inspired API and interface
+* Namespace routing
 * Bundled middlewares
 * Easy broadcasting
 
@@ -40,18 +41,17 @@ io.use(signal.cookieParser());
 io.use(signal.session('my secret'));
 
 io.connect('/posts/:postId', function(socket) {
-  console.log(socket.params.postId);
-
   socket.on('read', function(req, res) {
-    var post = 'A post';
+    var post = {id: req.params.postId, title: 'A post'};
     res.send(post);
   });
 
-  socket.on('create', function(req, res) {
-    var newPost = req.body;
+  socket.on('update', function(req, res) {
+    var post = req.body;
+    // do update ...
 
-    // broadcast data to all sockets joined in the same namespace.
-    res.broadcast.send(newPost);
+    // send back the result and broadcast it to all clients joined in the same namespace.
+    res.broadcast.send(post);
   });
 });
 
@@ -72,12 +72,12 @@ socket.on('connect', function() {
   });
 
   var post = {title: 'Hello, World'}
-  socket.emit('create', post, function(err, post) {
-    console.log('Created a post', post);
+  socket.emit('update', post, function(err, post) {
+    console.log('Update result', post);
   });
 
-  socket.on('create', function(post) {
-    console.log('Received a broadcasted post data', post);
+  socket.on('update', function(post) {
+    console.log('Received a result of other clients', post);
   });
 });
 </script>
