@@ -1,7 +1,7 @@
 {
   "name": "signal.io",
-  "version": "0.0.3",
-  "description": "A realtime application framework for building WebSocket based Web API with Node.js",
+  "version": "0.0.4",
+  "description": "A realtime application framework for building Web API based on WebSocket",
   "author": "Naoyuki Kanezawa <naoyuki.kanezawa@gmail.com>",
   "keywords": [
     "real-time", "framework", "websocket", "socket.io", "connect", "api", "rest"
