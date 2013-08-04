@@ -146,33 +146,4 @@ describe('router', function() {
       client('/user/10/edit');
     });
   });
-
-  describe('case sensitivity', function() {
-    it('should be disabled by default', function(done) {
-      this.io.connect('/user', function(socket) {
-        done();
-      });
-      client('/USER');
-    });
-
-    describe('when "case sensitive routing" is enabled', function() {
-      it('should match identical casing', function(done) {
-        this.io._router.caseSensitive = true;
-        this.io.connect('/uSer', function(socket) {
-          done();
-        });
-        client('/uSer');
-      });
-
-      it('should not match otherwise', function(done) {
-        this.io._router.caseSensitive = true;
-        this.io.connect('/uSer', function(socket) {});
-        var socket = client('/user');
-        socket.once('error', function(err) {
-          expect(err).to.eql({status: 404});
-          done();
-        });
-      });
-    });
-  });
 });
