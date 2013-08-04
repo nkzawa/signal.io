@@ -119,4 +119,60 @@ describe('router', function() {
       this.router.route('/foo', function(){}, function(){});
     });
   });
+
+  it('should decode params', function(done) {
+    this.io.connect('/:name', function(socket) {
+      expect(socket.params.name).to.equal('foo/bar');
+      done();
+    });
+    client('/foo%2Fbar');
+  });
+
+  describe('when given a regexp', function() {
+    it('should match the pathname only', function(done) {
+      this.io.connect(/^\/user\/([0-9]+)$/, function(socket) {
+        done();
+      });
+      client('/user/12');
+    });
+
+    it('should populate req.params with the captures', function(done) {
+      this.io.connect(/^\/user\/([0-9]+)\/(view|edit)?$/, function(socket) {
+        var id = socket.params.shift()
+          , op = socket.params.shift();
+        expect(op + 'ing user ' + id).to.equal('editing user 10');
+        done();
+      });
+      client('/user/10/edit');
+    });
+  });
+
+  describe('case sensitivity', function() {
+    it('should be disabled by default', function(done) {
+      this.io.connect('/user', function(socket) {
+        done();
+      });
+      client('/USER');
+    });
+
+    describe('when "case sensitive routing" is enabled', function() {
+      it('should match identical casing', function(done) {
+        this.io._router.caseSensitive = true;
+        this.io.connect('/uSer', function(socket) {
+          done();
+        });
+        client('/uSer');
+      });
+
+      it('should not match otherwise', function(done) {
+        this.io._router.caseSensitive = true;
+        this.io.connect('/uSer', function(socket) {});
+        var socket = client('/user');
+        socket.once('error', function(err) {
+          expect(err).to.eql({status: 404});
+          done();
+        });
+      });
+    });
+  });
 });

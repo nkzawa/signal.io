@@ -220,7 +220,7 @@ describe('Response', function() {
       var socket = client();
       socket.on('connect', function() {
         socket.emit('foo', function(err) {
-          expect(err).to.eql({statusCode: 500});
+          expect(err).to.eql({status: 500});
           done();
         });
       });
