@@ -1,6 +1,7 @@
 
 var expect = require('chai').expect
   , support = require('./support')
+  , async = require('async')
   , client = support.client;
 
 
@@ -151,7 +152,7 @@ describe('Response', function() {
   });
 
   describe('.status(code)', function() {
-    it('should set the response .statusCode', function() {
+    it('should set the response .statusCode', function(done) {
       this.io.connect(function(socket) {
         socket.on('foo', function(req, res) {
           res.status(201);
@@ -163,6 +164,65 @@ describe('Response', function() {
       var socket = client();
       socket.on('connect', function() {
         socket.emit('foo');
+      });
+    });
+  });
+
+  describe('.to(name)', function() {
+    it('should broadcast only to the room', function(done) {
+      this.io.connect(function(socket) {
+        socket.on('join', function(req, res) {
+          socket.join('foo', res.send.bind(res));
+        });
+
+        socket.on('broadcast', function(req, res) {
+          res.broadcast.to('foo').send(req.body);
+        });
+      });
+
+      var socket1 = client();
+      var socket2 = client();
+      var socket3 = client();
+
+      async.each([socket1, socket2, socket3], function(socket, callback) {
+        socket.on('connect', callback);
+      }, function(err) {
+        if (err) throw err;
+
+        socket2.emit('join', function(err) {
+          if (err) throw err;
+
+          socket1.emit('broadcast', 'woot', function(err, body) {
+            expect(body).to.eql('woot');
+          });
+
+          socket2.on('broadcast', function(body) {
+            expect(body).to.eql('woot');
+            done();
+          });
+
+          socket3.on('broadcast', function() {
+            throw new Error('Called unexpectedly');
+          });
+        });
+      });
+    });
+  });
+
+  describe('.send(status)', function() {
+    it('should send error as a response', function(done) {
+      this.io.connect(function(socket) {
+        socket.on('foo', function(req, res) {
+          res.send(500);
+        });
+      });
+
+      var socket = client();
+      socket.on('connect', function() {
+        socket.emit('foo', function(err) {
+          expect(err).to.eql({statusCode: 500});
+          done();
+        });
       });
     });
   });

@@ -4,7 +4,7 @@ var expect = require('chai').expect
 
 describe('signal.io', function() {
 
-  it('should export constructors', function(){
+  it('should export constructors', function() {
     expect(signal.Namespace).to.be.a('function');
     expect(signal.Socket).to.be.a('function');
     expect(signal.Route).to.be.a('function');
@@ -13,19 +13,17 @@ describe('signal.io', function() {
     expect(signal.Response).to.be.a('function');
   });
 
-  it('should export middlewares', function(){
+  it('should export middlewares', function() {
     expect(signal.cookieParser).to.be.a('function');
     expect(signal.session).to.be.a('function');
     expect(signal.csrf).to.be.a('function');
     expect(signal.logger).to.be.a('function');
   });
 
-  it('should set default path', function(done) {
+  it('should set default path', function() {
     var io = signal();
     expect(io._path).to.eql('/signal.io');
-    done();
   });
-
 });
 
 

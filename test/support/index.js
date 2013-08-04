@@ -15,8 +15,18 @@ exports.client = function client(path, options) {
     var urlObj = url.parse(uri, true);
     urlObj.query.headers = JSON.stringify(options.headers);
     uri = url.format(urlObj);
+    delete options.headers
   }
-  return io(uri, {path: '/signal.io', forceNew: true});
+
+  options.path = options.path ||  '/signal.io';
+  if (!('forceNew' in options)) {
+    options.forceNew = true;
+  }
+  if (!('reconnection' in options)) {
+    options.reconnection = false;
+  }
+
+  return io(uri, options);
 };
 
 exports.startServer = function(done) {
