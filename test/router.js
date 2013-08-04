@@ -122,10 +122,14 @@ describe('router', function() {
 
   it('should decode params', function(done) {
     this.io.connect('/:name', function(socket) {
-      expect(socket.params.name).to.equal('foo/bar');
+      socket.send(socket.params.name);
+    });
+
+    var socket = client('/foo%2Fbar');
+    socket.on('message', function(data) {
+      expect(data).to.equal('foo/bar');
       done();
     });
-    client('/foo%2Fbar');
   });
 
   describe('when given a regexp', function() {
@@ -140,10 +144,268 @@ describe('router', function() {
       this.io.connect(/^\/user\/([0-9]+)\/(view|edit)?$/, function(socket) {
         var id = socket.params.shift()
           , op = socket.params.shift();
-        expect(op + 'ing user ' + id).to.equal('editing user 10');
+        socket.send(op + 'ing user ' + id);
+      });
+
+      var socket = client('/user/10/edit');
+      socket.on('message', function(data) {
+        expect(data).to.equal('editing user 10');
         done();
       });
-      client('/user/10/edit');
     });
+  });
+
+  it('should allow escaped regexp', function(done) {
+    this.io.connect('/user/\\d+', function(socket) {});
+
+    var socket1 = client('/user/10');
+    socket1.on('connect', function() {
+      var socket2 = client('/user/tj');
+      socket2.once('error', function(err) {
+        expect(err.status).to.equal(404);
+        done();
+      });
+    });
+  });
+
+  it('should allow literal "."', function(done) {
+    this.io.connect('/api/users/:from..:to', function(socket) {
+      var from = socket.params.from
+        , to = socket.params.to;
+      socket.send('users from ' + from + ' to ' + to);
+    });
+
+    var socket = client('/api/users/1..50');
+    socket.on('message', function(data) {
+      expect(data).to.equal('users from 1 to 50');
+      done();
+    });
+  })
+
+  describe('*', function() {
+    it('should denote a greedy capture group', function(done) {
+      this.io.connect('/user/*.json', function(socket) {
+        socket.send(socket.params[0]);
+      });
+
+      var socket = client('/user/tj.json');
+      socket.on('message', function(data) {
+        expect(data).to.equal('tj');
+        done();
+      });
+    })
+
+    it('should work with several', function(done) {
+      this.io.connect('/api/*.*', function(socket) {
+        var resource = socket.params.shift()
+          , format = socket.params.shift();
+        socket.send(resource + ' as ' + format);
+      });
+
+      var socket = client('/api/users/foo.bar.json');
+      socket.on('message', function(data) {
+        expect(data).to.equal('users/foo.bar as json');
+        done();
+      });
+    })
+
+    it('should work cross-segment', function(done) {
+      this.io.connect('/api*', function(socket) {
+        socket.send(socket.params[0]);
+      });
+
+      var socket1 = client('/api');
+      socket1.on('message', function(data) {
+        expect(data).to.equal('');
+
+        var socket2 = client('/api/hey');
+        socket2.on('message', function(data) {
+          expect(data).to.equal('/hey');
+          done();
+        });
+      });
+    })
+
+    it('should allow naming', function(done) {
+      this.io.connect('/api/:resource(*)', function(socket) {
+        var resource = socket.params.resource;
+        socket.send(resource);
+      });
+
+      var socket = client('/api/users/0.json');
+      socket.on('message', function(data) {
+        expect(data).to.equal('users/0.json');
+        done();
+      });
+    });
+
+    it('should not be greedy immediately after param', function(done) {
+      this.io.connect('/user/:user*', function(socket) {
+        socket.send(socket.params.user);
+      });
+
+      var socket = client('/user/122');
+      socket.on('message', function(data) {
+        expect(data).equal('122');
+        done();
+      });
+    });
+
+    it('should eat everything after /', function(done) {
+      this.io.connect('/user/:user*', function(socket) {
+        socket.send(socket.params.user);
+      });
+
+      var socket = client('/user/122/aaa');
+      socket.on('message', function(data) {
+        expect(data).equal('122');
+        done();
+      });
+    });
+
+    it('should span multiple segments', function(done) {
+      this.io.connect('/file/*', function(socket) {
+        socket.send(socket.params[0]);
+      });
+
+      var socket = client('/file/javascripts/jquery.js');
+      socket.on('message', function(data) {
+        expect(data).equal('javascripts/jquery.js');
+        done();
+      });
+    });
+
+    it('should be optional', function(done) {
+      this.io.connect('/file/*', function(socket) {
+        socket.send(socket.params[0]);
+      });
+
+      var socket = client('/file/');
+      socket.on('message', function(data) {
+        expect(data).equal('');
+        done();
+      });
+    })
+
+    it('should require a preceeding /', function(done) {
+      this.io.connect('/file/*', function(socket) {
+        socket.send(socket.params[0]);
+      });
+
+      var socket = client('/file');
+      socket.once('error', function(err) {
+        expect(err.status).equal(404);
+        done();
+      });
+    });
+  });
+
+  describe(':name', function() {
+    it('should denote a capture group', function(done) {
+      this.io.connect('/user/:user', function(socket) {
+        socket.send(socket.params.user);
+      });
+
+      var socket = client('/user/tj');
+      socket.on('message', function(data) {
+        expect(data).to.equal('tj');
+        done();
+      });
+    });
+
+    it('should match a single segment only', function(done) {
+      this.io.connect('/user/:user', function(socket) {
+        socket.send(socket.params.user);
+      });
+
+      var socket = client('/user/tj/edit');
+      socket.once('error', function(err) {
+        expect(err.status).equal(404);
+        done();
+      });
+    });
+
+    it('should allow several capture groups', function(done) {
+      this.io.connect('/user/:user/:op', function(socket) {
+        socket.send(socket.params.op + 'ing ' + socket.params.user);
+      });
+
+      var socket = client('/user/tj/edit');
+      socket.on('message', function(data) {
+        expect(data).to.equal('editing tj');
+        done();
+      });
+    });
+  });
+
+  describe(':name?', function() {
+    it('should denote an optional capture group', function(done) {
+      this.io.connect('/user/:user/:op?', function(socket) {
+        var op = socket.params.op || 'view';
+        socket.send(op + 'ing ' + socket.params.user);
+      });
+
+      var socket = client('/user/tj');
+      socket.on('message', function(data) {
+        expect(data).to.equal('viewing tj');
+        done();
+      });
+    });
+
+    it('should populate the capture group', function(done) {
+      this.io.connect('/user/:user/:op?', function(socket) {
+        var op = socket.params.op || 'view';
+        socket.send(op + 'ing ' + socket.params.user);
+      });
+
+      var socket = client('/user/tj/edit');
+      socket.on('message', function(data) {
+        expect(data).to.equal('editing tj');
+        done();
+      });
+    });
+  });
+
+  describe('.:name', function() {
+    it('should denote a format', function(done) {
+      this.io.connect('/:name.:format', function(socket) {
+        socket.send(socket.params.name + ' as ' + socket.params.format);
+      });
+
+      var socket = client('/foo.json');
+      socket.on('message', function(data) {
+        expect(data).to.equal('foo as json');
+
+        var socket = client('/foo');
+        socket.once('error', function(err) {
+          expect(err.status).to.equal(404);
+          done();
+        });
+      });
+    });
+  });
+
+  describe('.:name?', function() {
+    it('should denote an optional format', function(done) {
+      this.io.connect('/:name.:format?', function(socket) {
+        socket.send(socket.params.name + ' as ' + (socket.params.format || 'html'));
+      });
+
+      var socket = client('/foo');
+      socket.on('message', function(data) {
+        expect(data).to.equal('foo as html');
+
+        var socket = client('/foo.json');
+        socket.on('message', function(data) {
+          expect(data).to.equal('foo as json');
+          done();
+        });
+      });
+    });
+  });
+
+  it('should be chainable', function() {
+    expect(this.io.connect(function() {})).to.equal(this.io);
+    expect(this.io.connect('/', function() {})).to.equal(this.io);
   });
 });
