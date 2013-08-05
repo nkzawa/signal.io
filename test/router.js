@@ -408,4 +408,76 @@ describe('router', function() {
     expect(this.io.connect(function() {})).to.equal(this.io);
     expect(this.io.connect('/', function() {})).to.equal(this.io);
   });
+
+  describe('app.routes', function() {
+    it('should be initialized', function() {
+      expect(this.io.routes).to.eql([]);
+    });
+
+    it('should be populated with routes', function() {
+      this.io.connect('/', function(socket) {});
+      this.io.connect('/user/:id', function(socket) {});
+
+      var routes = this.io.routes;
+      expect(routes).to.have.length(2);
+
+      expect(routes[0].path).to.equal('/');
+      expect(routes[0].regexp.toString()).to.equal('/^\\/$/');
+
+      expect(routes[1].path).to.equal('/user/:id');
+    });
+
+    it('should be mutable', function(done) {
+      this.io.connect('/', function(socket) {});
+      this.io.connect('/user/:id', function(socket) {});
+
+      var routes = this.io.routes;
+      expect(routes).to.have.length(2);
+
+      expect(routes[0].path).to.equal('/');
+      expect(routes[0].regexp.toString()).to.equal('/^\\/$/');
+
+      routes.splice(1);
+
+      var socket = client('/user/12');
+      socket.once('error', function(err) {
+        expect(err.status).to.equal(404);
+        done();
+      });
+    });
+  });
+
+  describe('app.routes.error', function() {
+    it('should only call an error handling routing callback when an error is propagated', function(done) {
+      var a = false;
+      var b = false;
+      var c = false;
+      var d = false;
+
+      this.io.connect('/', function(socket, next) {
+        next(new Error('fabricated error'));
+      }, function(socket, next) {
+        a = true;
+        next();
+      }, function(err, socket, next) {
+        b = true;
+        expect(err.message).to.equal('fabricated error');
+        next(err);
+      }, function(err, socket, next) {
+        c = true;
+        expect(err.message).to.equal('fabricated error');
+        next();
+      }, function(err, socket, next) {
+        d = true;
+        next();
+      }, function(socket) {
+        expect(a).to.be.false;
+        expect(b).to.be.true;
+        expect(c).to.be.true;
+        expect(d).to.be.false;
+        done();
+      });
+      client('/');
+    });
+  });
 });
