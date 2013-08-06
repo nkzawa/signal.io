@@ -10,10 +10,11 @@ describe('Request', function() {
   afterEach(support.stopServer);
 
   describe('properties', function() {
-    it('should be normalized', function(done) {
-      this.io.connect(function(socket) {
-        socket.on('foo', function(req, res) {
-          expect(req.method).to.eql('foo');
+    it('should be exposed', function(done) {
+      this.io.connect('/foo', function(socket) {
+        socket.on('bar', function(req, res) {
+          expect(req.url).to.eql('/foo');
+          expect(req.method).to.eql('bar');
           expect(req.body).to.eql('body');
           expect(req.headers).to.eql({header: 'hi'});
           expect(req.socket).to.equal(socket);
@@ -25,9 +26,9 @@ describe('Request', function() {
         });
       });
 
-      var socket = client();
+      var socket = client('/foo');
       socket.on('connect', function() {
-        socket.emit('foo', 'body', {header: 'hi'});
+        socket.emit('bar', 'body', {header: 'hi'});
       });
     });
   });

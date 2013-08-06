@@ -10,7 +10,7 @@ describe('Response', function() {
   afterEach(support.stopServer);
 
   describe('properties', function() {
-    it('should be normalized', function(done) {
+    it('should be exposed', function(done) {
       this.io.connect(function(socket) {
         socket.on('foo', function(req, res) {
           expect(res.method).to.eql('foo');
