@@ -1,5 +1,5 @@
 
-MOCHA_OPTS= --check-leaks
+MOCHA_OPTS = --check-leaks --bail
 REPORTER = dot
 
 test:
