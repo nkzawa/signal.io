@@ -5,7 +5,7 @@ var expect = require('chai').expect
   , client = support.client;
 
 
-describe('errorHandler', function() {
+describe('middleware.errorHandler', function() {
   beforeEach(support.startServer);
   afterEach(support.stopServer);
 
