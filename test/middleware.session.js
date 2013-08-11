@@ -22,7 +22,7 @@ describe('session', function() {
           session.count = session.count || 0;
           session.count++;
           res.set('Set-Cookie', sessionCookie(_req, 'my secret'));
-          res.send(null, session.count);
+          res.end(session.count);
         });
       });
 
@@ -55,7 +55,7 @@ describe('session', function() {
           _req.session.save(function(err) {
             if (err) throw err;
             res.set('Set-Cookie', sessionCookie(_req, 'my secret'));
-            res.send(null, session.count);
+            res.end(session.count);
           });
         });
       });
