@@ -1,6 +1,6 @@
 {
   "name": "signal.io",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "A realtime application framework for building Web API based on WebSocket",
   "author": "Naoyuki Kanezawa <naoyuki.kanezawa@gmail.com>",
   "keywords": [
