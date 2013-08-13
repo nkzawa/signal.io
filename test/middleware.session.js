@@ -7,7 +7,6 @@ var expect = require('chai').expect
 var sessionCookie = support.sessionCookie;
 
 describe('session', function() {
-
   beforeEach(support.startServer);
   afterEach(support.stopServer);
 
@@ -17,12 +16,10 @@ describe('session', function() {
       this.io.use(signal.session({secret: 'my secret'}));
       this.io.connect(function(socket) {
         socket.on('message', function(req, res) {
-          var _req = socket.request
-            , session = _req.session;
-          session.count = session.count || 0;
-          session.count++;
-          res.set('Set-Cookie', sessionCookie(_req, 'my secret'));
-          res.end(session.count);
+          req.session.count = req.session.count || 0;
+          req.session.count++;
+          res.set('Set-Cookie', sessionCookie(req.request, 'my secret'));
+          res.end(req.session.count);
         });
       });
 
@@ -47,15 +44,12 @@ describe('session', function() {
       this.io.use(signal.session({secret: 'my secret'}));
       this.io.connect(function(socket) {
         socket.on('message', function(req, res) {
-          var _req = socket.request
-            , session = _req.session;
-
-          session.count = session.count || 0;
-          session.count++;
-          _req.session.save(function(err) {
+          req.session.count = req.session.count || 0;
+          req.session.count++;
+          req.session.save(function(err) {
             if (err) throw err;
-            res.set('Set-Cookie', sessionCookie(_req, 'my secret'));
-            res.end(session.count);
+            res.set('Set-Cookie', sessionCookie(req.request, 'my secret'));
+            res.end(req.session.count);
           });
         });
       });
