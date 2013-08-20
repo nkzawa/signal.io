@@ -10,39 +10,47 @@ footer {
   padding-right: 15px;
 }
 
+
 /*
- * Off Canvas
- * --------------------------------------------------
+ * Side navigation
+ *
+ * Scrollspy and affixed enhanced navigation to highlight sections and secondary
+ * sections of docs content.
  */
-@media screen and (max-width: 768px) {
-  .row-offcanvas {
-    position: relative;
-    -webkit-transition: all 0.25s ease-out;
-    -moz-transition: all 0.25s ease-out;
-    transition: all 0.25s ease-out;
-  }
 
-  .row-offcanvas-right
-  .sidebar-offcanvas {
-    right: -50%; /* 6 columns */
-  }
+/* By default it's not affixed in mobile views, so undo that */
+.sidebar-nav.affix {
+  position: static;
+}
 
-  .row-offcanvas-left
-  .sidebar-offcanvas {
-    left: -50%; /* 6 columns */
+/* Show and affix the side nav when space allows it */
+@media screen and (min-width: 768px) {
+  /* Widen the fixed sidebar */
+  .sidebar-nav.affix,
+  .sidebar-nav.affix-bottom {
+    width: 163px;
   }
-
-  .row-offcanvas-right.active {
-    right: 50%; /* 6 columns */
+  .sidebar-nav.affix {
+    position: fixed; /* Undo the static from mobile first approach */
+    top: 70px;
+    bottom: 0;
+    overflow: auto;
   }
-
-  .row-offcanvas-left.active {
-    left: 50%; /* 6 columns */
+  .sidebar-nav.affix-bottom {
+    position: absolute; /* Undo the static from mobile first approach */
   }
-
-  .sidebar-offcanvas {
-    position: absolute;
-    top: 0;
-    width: 50%; /* 6 columns */
+}
+@media screen and (min-width: 992px) {
+  /* Widen the fixed sidebar again */
+  .sidebar-nav.affix-bottom,
+  .sidebar-nav.affix {
+    width: 213px;
+  }
+}
+@media screen and (min-width: 1200px) {
+  /* Widen the fixed sidebar again */
+  .sidebar-nav.affix-bottom,
+  .sidebar-nav.affix {
+    width: 263px;
   }
 }
