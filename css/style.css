@@ -54,3 +54,23 @@ footer {
     width: 263px;
   }
 }
+
+
+.well {
+  background-color: transparent;
+  border: none;
+  border-radius: 0;
+  -webkit-box-shadow: none;
+  box-shadow: none;
+}
+.jumbotron {
+  background-color: transparent;
+}
+
+.navbar-default .navbar-brand {
+  font-weight: bold;
+}
+.navbar-default .navbar-brand:hover,
+.navbar-default .navbar-brand:focus {
+  color: #4183c4;
+}
