@@ -1478,13 +1478,13 @@ th {
   background-color: #f5f5f5;
 }
 
-table col[class^="col-"] {
+table col[class*="col-"] {
   display: table-column;
   float: none;
 }
 
-table td[class^="col-"],
-table th[class^="col-"] {
+table td[class*="col-"],
+table th[class*="col-"] {
   display: table-cell;
   float: none;
 }
@@ -1911,7 +1911,7 @@ textarea.input-lg {
 }
 
 .form-control-static {
-  padding-top: 6px;
+  padding-top: 7px;
   margin-bottom: 0;
 }
 
@@ -3339,6 +3339,13 @@ input[type="button"].btn-block {
   margin-bottom: 1px;
 }
 
+@media (min-width: 768px) {
+  .navbar-right .dropdown-menu {
+    right: 0;
+    left: auto;
+  }
+}
+
 .btn-default .caret {
   border-top-color: #333333;
 }
@@ -4006,6 +4013,7 @@ textarea.input-group-sm > .input-group-btn > .btn {
 
 .navbar {
   position: relative;
+  z-index: 1000;
   min-height: 50px;
   margin-bottom: 20px;
   border: 1px solid transparent;
@@ -4152,7 +4160,6 @@ textarea.input-group-sm > .input-group-btn > .btn {
   position: fixed;
   right: 0;
   left: 0;
-  z-index: 1030;
   border-width: 0 0 1px;
 }
 
@@ -4165,6 +4172,7 @@ textarea.input-group-sm > .input-group-btn > .btn {
 
 .navbar-fixed-top {
   top: 0;
+  z-index: 1030;
 }
 
 .navbar-fixed-bottom {
@@ -4272,10 +4280,6 @@ textarea.input-group-sm > .input-group-btn > .btn {
   }
   .navbar-right {
     float: right !important;
-  }
-  .navbar-right .dropdown-menu {
-    right: 0;
-    left: auto;
   }
 }
 
@@ -4937,8 +4941,8 @@ a.list-group-item.active > .badge,
 
 @media screen and (min-width: 768px) {
   .jumbotron {
-    padding-top: 50px;
-    padding-bottom: 50px;
+    padding-top: 48px;
+    padding-bottom: 48px;
   }
   .container .jumbotron {
     padding-right: 60px;
@@ -5343,10 +5347,6 @@ a.list-group-item:focus {
   clear: both;
 }
 
-.panel > .table {
-  margin-bottom: 0;
-}
-
 .panel > .list-group {
   margin-bottom: 0;
 }
@@ -5591,6 +5591,12 @@ button.close {
 
 .modal-open {
   overflow: hidden;
+}
+
+body.modal-open,
+.modal-open .navbar-fixed-top,
+.modal-open .navbar-fixed-bottom {
+  margin-right: 15px;
 }
 
 .modal {
