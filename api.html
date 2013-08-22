@@ -16,7 +16,7 @@
     <link href="css/style.css" rel="stylesheet">
   </head>
 
-  <body>
+  <body data-spy="scroll" data-target="#sidebar">
     <div class="navbar navbar-fixed-top navbar-default" role="navigation">
       <div class="container">
         <div class="navbar-header">
@@ -42,9 +42,9 @@
           <div class="well sidebar-nav" data-spy="affix" data-offset-top="0">
             <ul class="nav">
               <li>Sidebar</li>
-              <li class="active"><a href="#">Link</a></li>
-              <li><a href="#">Link</a></li>
-              <li><a href="#">Link</a></li>
+              <li class="active"><a href="#foo">Link</a></li>
+              <li><a href="#bar">Link</a></li>
+              <li><a href="#baz">Link</a></li>
               <li>Sidebar</li>
               <li><a href="#">Link</a></li>
               <li><a href="#">Link</a></li>
@@ -63,7 +63,7 @@
           </div>
           <div class="row">
             <div class="col-6 col-sm-6 col-lg-4">
-              <h2>Heading</h2>
+              <h2 id="foo">Heading</h2>
               <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui. </p>
               <p><a class="btn btn-default" href="#">View details &raquo;</a></p>
             </div><!--/span-->
@@ -73,7 +73,7 @@
               <p><a class="btn btn-default" href="#">View details &raquo;</a></p>
             </div><!--/span-->
             <div class="col-6 col-sm-6 col-lg-4">
-              <h2>Heading</h2>
+              <h2 id="bar">Heading</h2>
               <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui. </p>
               <p><a class="btn btn-default" href="#">View details &raquo;</a></p>
             </div><!--/span-->
@@ -83,7 +83,7 @@
               <p><a class="btn btn-default" href="#">View details &raquo;</a></p>
             </div><!--/span-->
             <div class="col-6 col-sm-6 col-lg-4">
-              <h2>Heading</h2>
+              <h2 id="baz">Heading</h2>
               <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui. </p>
               <p><a class="btn btn-default" href="#">View details &raquo;</a></p>
             </div><!--/span-->

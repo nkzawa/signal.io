@@ -22,6 +22,13 @@ footer {
 .sidebar-nav.affix {
   position: static;
 }
+.sidebar-nav .nav > li > a {
+  color: #777777;
+}
+.sidebar-nav .nav > .active > a {
+  color: #428BCA;
+  font-weight: bold;
+}
 
 /* Show and affix the side nav when space allows it */
 @media screen and (min-width: 768px) {
@@ -72,5 +79,6 @@ footer {
 }
 .navbar-default .navbar-brand:hover,
 .navbar-default .navbar-brand:focus {
-  color: #4183c4;
+  color: #428BCA;
 }
+
