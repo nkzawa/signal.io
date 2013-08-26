@@ -162,7 +162,7 @@ describe('router', function() {
     socket1.on('connect', function() {
       var socket2 = client('/user/tj');
       socket2.once('error', function(err) {
-        expect(err.status).to.equal(404);
+        expect(err).to.have.property('status', 404);
         done();
       });
     });
@@ -294,7 +294,7 @@ describe('router', function() {
 
       var socket = client('/file');
       socket.once('error', function(err) {
-        expect(err.status).equal(404);
+        expect(err).to.have.property('status', 404);
         done();
       });
     });
@@ -320,7 +320,7 @@ describe('router', function() {
 
       var socket = client('/user/tj/edit');
       socket.once('error', function(err) {
-        expect(err.status).equal(404);
+        expect(err).to.have.property('status', 404);
         done();
       });
     });
@@ -378,7 +378,7 @@ describe('router', function() {
 
         var socket = client('/foo');
         socket.once('error', function(err) {
-          expect(err.status).to.equal(404);
+          expect(err).to.have.property('status', 404);
           done();
         });
       });
@@ -441,7 +441,7 @@ describe('router', function() {
 
       var socket = client('/user/12');
       socket.once('error', function(err) {
-        expect(err.status).to.equal(404);
+        expect(err).to.have.property('status', 404);
         done();
       });
     });
