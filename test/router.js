@@ -93,22 +93,22 @@ describe('router', function() {
     });
   });
 
-  describe('.multiple callbacks', function(){
-    it('should throw if a callback is null', function(){
+  describe('.multiple callbacks', function() {
+    it('should throw if a callback is null', function() {
       var router = this.router;
       expect(function() {
         router.route('/foo', null, function(){});
       }).to.throw(Error);
     });
 
-    it('should throw if a callback is undefined', function(){
+    it('should throw if a callback is undefined', function() {
       var router = this.router;
       expect(function() {
         router.route('/foo', undefined, function(){});
       }).to.throw(Error);
     });
 
-    it('should throw if a callback is not a function', function(){
+    it('should throw if a callback is not a function', function() {
       var router = this.router;
       expect(function() {
         router.route('/foo', 'not a function', function(){});
