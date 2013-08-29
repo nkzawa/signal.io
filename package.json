@@ -1,6 +1,6 @@
 {
   "name": "signal.io",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "A realtime application framework for building Web API based on WebSocket",
   "author": "Naoyuki Kanezawa <naoyuki.kanezawa@gmail.com>",
   "keywords": [
@@ -16,7 +16,7 @@
   "dependencies": {
     "socket.io": "nkzawa/socket.io",
     "socket.io-bundle": "0.0.4",
-    "socket.io-stream": "*",
+    "socket.io-stream": "0.3.1",
     "debug": "*"
   },
   "devDependencies": {
