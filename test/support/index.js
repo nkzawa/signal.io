@@ -18,15 +18,16 @@ exports.client = function client(path, options) {
     delete options.headers
   }
 
-  options.path = options.path ||  '/signal.io';
-  if (!('forceNew' in options)) {
-    options.forceNew = true;
-  }
-  if (!('reconnection' in options)) {
-    options.reconnection = false;
+  var _options = {
+    path: '/signal.io',
+    forceNew: true,
+    reconnection: false
+  };
+  for (var key in options) {
+    _options[key] = options[key];
   }
 
-  return io(uri, options);
+  return io(uri, _options);
 };
 
 exports.startServer = function(done) {
