@@ -16,14 +16,20 @@
   "dependencies": {
     "socket.io": "nkzawa/socket.io",
     "socket.io-bundle": "0.0.4",
-    "socket.io-stream": "0.3.1",
+    "socket.io-stream": "0.5.0",
     "debug": "*"
   },
   "devDependencies": {
     "socket.io-client": "nkzawa/socket.io-client",
     "cookie-signature": "1.0.1",
+    "git-scripts": "*",
     "mocha": "*",
     "chai": "*",
     "async": "*"
+  },
+  "git": {
+    "scripts": {
+      "pre-commit": "npm test"
+    }
   }
 }
