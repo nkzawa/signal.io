@@ -14,7 +14,6 @@ function times(n, callback) {
 }
 
 describe('signal.io', function() {
-
   beforeEach(support.startServer);
   afterEach(support.stopServer);
 

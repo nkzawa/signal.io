@@ -5,6 +5,7 @@ var expect = require('chai').expect
 describe('signal.io', function() {
 
   it('should export constructors', function() {
+    expect(signal.Server).to.be.a('function');
     expect(signal.Namespace).to.be.a('function');
     expect(signal.Socket).to.be.a('function');
     expect(signal.Route).to.be.a('function');
@@ -18,6 +19,8 @@ describe('signal.io', function() {
     expect(signal.session).to.be.a('function');
     expect(signal.csrf).to.be.a('function');
     expect(signal.logger).to.be.a('function');
+    expect(signal.errorHandler).to.be.a('function');
+    expect(signal.timeout).to.be.a('function');
   });
 
   it('should set default path', function() {
