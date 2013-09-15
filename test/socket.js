@@ -5,8 +5,12 @@ var expect = require('chai').expect
 
 
 describe('Socket', function() {
-  beforeEach(support.startServer);
-  afterEach(support.stopServer);
+  beforeEach(function(done) {
+    support.startServer(this, done);
+  });
+  afterEach(function(done) {
+    support.stopServer(this, done);
+  });
 
   describe('.handle', function() {
     it('should match the method name only ', function(done) {

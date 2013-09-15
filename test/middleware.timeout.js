@@ -6,8 +6,12 @@ var expect = require('chai').expect
 
 
 describe('middleware.timeout', function() {
-  beforeEach(support.startServer);
-  afterEach(support.stopServer);
+  beforeEach(function(done) {
+    support.startServer(this, done);
+  });
+  afterEach(function(done) {
+    support.stopServer(this, done);
+  });
 
   describe('when below the timeout', function() {
     it('should do nothing', function(done) {

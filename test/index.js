@@ -14,8 +14,12 @@ function times(n, callback) {
 }
 
 describe('signal.io', function() {
-  beforeEach(support.startServer);
-  afterEach(support.stopServer);
+  beforeEach(function(done) {
+    support.startServer(this, done);
+  });
+  afterEach(function(done) {
+    support.stopServer(this, done);
+  });
 
   describe('middleware', function() {
     it('should work', function(done) {

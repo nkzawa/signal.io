@@ -30,30 +30,28 @@ exports.client = function client(path, options) {
   return io(uri, _options);
 };
 
-exports.startServer = function(done) {
-  this.server = http.Server();
-  this.io = signal(this.server);
-  this.io.use(exports.header);
-  this.server.listen(port, done);
+exports.startServer = function(context, done) {
+  context.server = http.Server();
+  context.io = signal(context.server);
+  context.io.use(exports.header);
+  context.server.listen(port, done);
 
-  var self = this;
-
-  this.sockets = [];
-  this.server.on('connection', function(sockets) {
-    self.sockets.push(sockets);
+  context.sockets = [];
+  context.server.on('connection', function(sockets) {
+    context.sockets.push(sockets);
   });
 };
 
-exports.stopServer = function(done) {
+exports.stopServer = function(context, done) {
   // FIXME: following doesn't work when error.
-  // this.io.sockets.sockets.slice().forEach(function(socket) {
+  // context.io.sockets.sockets.slice().forEach(function(socket) {
   //   socket.disconnect(true);
   // });
 
-  this.sockets.forEach(function(socket) {
+  context.sockets.forEach(function(socket) {
     socket.destroy();
   });
-  this.server.close(done);
+  context.server.close(done);
 };
 
 exports.header = function(socket, next) {

@@ -25,8 +25,12 @@ describe('Server', function() {
   });
 
   describe('when it started', function() {
-    beforeEach(support.startServer);
-    afterEach(support.stopServer);
+    beforeEach(function(done) {
+      support.startServer(this, done);
+    });
+    afterEach(function(done) {
+      support.stopServer(this, done);
+    });
 
     describe('.param(fn)', function() {
       it('should map app.param(name, ...) logic', function(done) {

@@ -9,9 +9,11 @@ var expect = require('chai').expect
 describe('router', function() {
   beforeEach(function(done) {
     this.router = new Router();
-    support.startServer.call(this, done);
-  })
-  afterEach(support.stopServer);
+    support.startServer(this, done);
+  });
+  afterEach(function(done) {
+    support.stopServer(this, done);
+  });
 
   describe('.match(nsp)', function() {
     it('should match (0)', function() {

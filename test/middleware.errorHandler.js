@@ -6,8 +6,12 @@ var expect = require('chai').expect
 
 
 describe('middleware.errorHandler', function() {
-  beforeEach(support.startServer);
-  afterEach(support.stopServer);
+  beforeEach(function(done) {
+    support.startServer(this, done);
+  });
+  afterEach(function(done) {
+    support.stopServer(this, done);
+  });
 
   describe('status', function() {
     it('should be 500 error by default', function(done) {

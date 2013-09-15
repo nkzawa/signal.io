@@ -6,8 +6,12 @@ var expect = require('chai').expect
 
 
 describe('Request', function() {
-  beforeEach(support.startServer);
-  afterEach(support.stopServer);
+  beforeEach(function(done) {
+    support.startServer(this, done);
+  });
+  afterEach(function(done) {
+    support.stopServer(this, done);
+  });
 
   describe('properties', function() {
     it('should be exposed', function(done) {
