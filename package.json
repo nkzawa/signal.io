@@ -1,0 +1,10 @@
+{
+  "name": "signal.io-docs",
+  "version": "0.0.0",
+  "private": true,
+  "devDependencies": {
+    "hogan.js": "*",
+    "marked": "*",
+    "async": "*"
+  }
+}

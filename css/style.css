@@ -9,6 +9,12 @@ footer {
   padding-left: 15px;
   padding-right: 15px;
 }
+h2, h3 {
+  padding-top: 70px;
+}
+:target {
+  padding-top: 70px;
+}
 
 
 /*
@@ -24,6 +30,8 @@ footer {
 }
 .sidebar-nav .nav > li > a {
   color: #777777;
+  padding-top: 3px;
+  padding-bottom: 3px;
 }
 .sidebar-nav .nav > .active > a {
   color: #428BCA;
@@ -74,6 +82,9 @@ footer {
   background-color: transparent;
 }
 
+.navbar-default {
+  background-color: #ffffff;
+}
 .navbar-default .navbar-brand {
   font-weight: bold;
 }

@@ -1,0 +1,79 @@
+#!/usr/bin/env node
+
+var fs = require('fs')
+  , path = require('path')
+  , hogan = require('hogan.js')
+  , async = require('async');
+
+
+function compile(filename, callback) {
+  fs.readFile(filename, function(err, data) {
+    if (err) return callback(err);
+    callback(null, hogan.compile(data.toString()));
+  });
+}
+
+function generate(input, output, data, partials, callback) {
+  if ('function' == typeof data) {
+    callback = data;
+    data = null;
+    partials = null;
+  } else if ('function' == typeof partials) {
+    callback = partials;
+    partials = null;
+  }
+
+  partials = partials || {};
+  callback = callback || function() {};
+
+  var keys = []
+    , filenames = [];
+
+  for (var k in partials) {
+    keys.push(k);
+    filenames.push(partials[k]);
+  }
+
+  async.parallel({
+    input: function(callback) {
+      compile(input, callback);
+    },
+    partials: function(callback) {
+      async.map(filenames, compile, function(err, templates) {
+        if (err) return callback(err);
+
+        var partials = {};
+        keys.forEach(function(k, i) {
+          partials[k] = templates[i];
+        });
+        callback(null, partials);
+      });
+    }
+  }, function(err, results) {
+    if (err) return callback(err);
+
+    var out = results.input.render(data, results.partials);
+    fs.writeFile(output, out, callback);
+  });
+}
+
+
+var rootDir = __dirname + '/..'
+  , docDir = rootDir + '/doc'
+  , layout = docDir + '/layout.mustache';
+
+generate(layout, rootDir + '/index.html', null, {
+  top: docDir + '/masthead.mustache',
+  main: docDir + '/index.mustache'
+});
+
+generate(layout, rootDir + '/getting-started.html', {
+  title: 'Getting started',
+  gettingStarted: true
+}, {main: docDir + '/getting-started.mustache'});
+
+generate(layout, rootDir + '/api.html', {
+  title: 'API Reference',
+  api: true
+}, {main: docDir + '/api.mustache'});
+
