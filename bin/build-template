@@ -1,0 +1,58 @@
+#!/usr/bin/env node
+
+var fs = require('fs')
+  , util = require('util')
+  , marked = require('marked')
+  , root = __dirname + '/..';
+
+
+function mkdir(path, callback) {
+  fs.exists(path, function(exists) {
+    if (exists) return callback();
+    fs.mkdir(path, callback);
+  });
+}
+
+function buildMenu(tokens) {
+  return tokens.filter(function(token) {
+    return 'heading' == token.type;
+  }).map(function(token) {
+    switch(token.depth) {
+    case 2:
+      return util.format('<li>%s</li>', token.text);
+    case 3:
+      var m = /([\w.$]+)(\(.*\))?/.exec(token.text)
+        , name = m[1]
+        , isFunction = !!m[2]
+        , anchor = name.replace(/\./g, '-');
+
+      if (isFunction) name += '()';
+
+      token.type = 'html';
+      token.pre = false;
+      token.text = util.format('<h3 id="%s">%s</h3>', anchor, token.text);
+
+      return util.format('<li><a href="#%s">%s</a></li>', anchor, name);
+    }
+  }).join('\n');
+}
+
+mkdir(root + '/out', function(err) {
+  if (err) throw err;
+
+  fs.readFile(root + '/doc/getting-started.markdown', function(err, data) {
+    if (err) throw err;
+
+    var tokens = marked.lexer(data.toString());
+    fs.writeFile(root + '/out/getting-started-menu.mustache', buildMenu(tokens));
+    fs.writeFile(root + '/out/getting-started.mustache', marked.parser(tokens));
+  });
+
+  fs.readFile(root + '/doc/api.markdown', function(err, data) {
+    if (err) throw err;
+
+    var tokens = marked.lexer(data.toString());
+    fs.writeFile(root + '/out/api-menu.mustache', buildMenu(tokens));
+    fs.writeFile(root + '/out/api.mustache', marked.parser(tokens));
+  });
+});

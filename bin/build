@@ -1,79 +1,41 @@
 #!/usr/bin/env node
 
 var fs = require('fs')
-  , path = require('path')
-  , hogan = require('hogan.js')
-  , async = require('async');
+  , Template = require('../lib/template')
+  , root = __dirname + '/..'
+  , layout = new Template(root + '/doc/layouts/default.mustache');
 
 
-function compile(filename, callback) {
-  fs.readFile(filename, function(err, data) {
-    if (err) return callback(err);
-    callback(null, hogan.compile(data.toString()));
-  });
-}
-
-function generate(input, output, data, partials, callback) {
-  if ('function' == typeof data) {
-    callback = data;
-    data = null;
-    partials = null;
-  } else if ('function' == typeof partials) {
-    callback = partials;
-    partials = null;
-  }
-
-  partials = partials || {};
-  callback = callback || function() {};
-
-  var keys = []
-    , filenames = [];
-
-  for (var k in partials) {
-    keys.push(k);
-    filenames.push(partials[k]);
-  }
-
-  async.parallel({
-    input: function(callback) {
-      compile(input, callback);
-    },
-    partials: function(callback) {
-      async.map(filenames, compile, function(err, templates) {
-        if (err) return callback(err);
-
-        var partials = {};
-        keys.forEach(function(k, i) {
-          partials[k] = templates[i];
-        });
-        callback(null, partials);
-      });
-    }
-  }, function(err, results) {
-    if (err) return callback(err);
-
-    var out = results.input.render(data, results.partials);
-    fs.writeFile(output, out, callback);
-  });
-}
-
-
-var rootDir = __dirname + '/..'
-  , docDir = rootDir + '/doc'
-  , layout = docDir + '/layout.mustache';
-
-generate(layout, rootDir + '/index.html', null, {
-  top: docDir + '/masthead.mustache',
-  main: docDir + '/index.mustache'
+layout.render(null, {
+  top: root + '/doc/_masthead.mustache',
+  main: root + '/doc/index.mustache'
+}, function(err, output) {
+  if (err) throw err;
+  fs.writeFile(root + '/index.html', output);
 });
 
-generate(layout, rootDir + '/getting-started.html', {
+layout.render({
   title: 'Getting started',
+  description: 'This is an example to show the sidebar layout',
   gettingStarted: true
-}, {main: docDir + '/getting-started.mustache'});
+}, {
+  main: root + '/doc/layouts/sidebar.mustache',
+  menu: root + '/out/getting-started-menu.mustache',
+  content: root + '/out/getting-started.mustache'
+}, function(err, output) {
+  if (err) throw err;
+  fs.writeFile(root + '/getting-started.html', output);
+});
 
-generate(layout, rootDir + '/api.html', {
+layout.render({
   title: 'API Reference',
   api: true
-}, {main: docDir + '/api.mustache'});
+}, {
+  main: root + '/doc/layouts/sidebar.mustache',
+  menu: root + '/out/api-menu.mustache',
+  content: root + '/out/api.mustache'
+}, function(err, output) {
+  if (err) throw err;
+  fs.writeFile(root + '/api.html', output);
+});
 
