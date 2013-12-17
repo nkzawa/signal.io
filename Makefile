@@ -15,7 +15,8 @@ test-cov:
 test-coveralls:
 	@$(MAKE) test \
 		REPORTER=mocha-lcov-reporter \
-		MOCHA_OPTS="--require blanket" | ./node_modules/.bin/coveralls
+		MOCHA_OPTS="--require blanket --check-leaks --bail" \
+		| ./node_modules/.bin/coveralls
 
 clean:
 	rm -f coverage.html

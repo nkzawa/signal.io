@@ -2,6 +2,7 @@
 [![Build Status](https://travis-ci.org/nkzawa/signal.io.png?branch=master)](https://travis-ci.org/nkzawa/signal.io)
 [![NPM version](https://badge.fury.io/js/signal.io.png)](http://badge.fury.io/js/signal.io)
 [![Dependency Status](https://gemnasium.com/nkzawa/signal.io.png)](https://gemnasium.com/nkzawa/signal.io)
+[![Coverage Status](https://coveralls.io/repos/nkzawa/signal.io/badge.png?branch=master)](https://coveralls.io/r/nkzawa/signal.io?branch=master)
 
 Signal.IO is a realtime application framewrork for building Web API based on WebSocket instead of HTTP.
 
