@@ -1,4 +1,2 @@
 
-module.exports = process.env.SIGNALIO_COV
-  ? require('./lib-cov')
-  : require('./lib');
+module.exports = require('./lib');

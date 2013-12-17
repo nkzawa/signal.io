@@ -4,14 +4,24 @@
   "description": "A realtime application framework for building Web API based on WebSocket",
   "author": "Naoyuki Kanezawa <naoyuki.kanezawa@gmail.com>",
   "keywords": [
-    "real-time", "framework", "websocket", "socket.io", "connect", "api", "rest"
+    "real-time",
+    "framework",
+    "websocket",
+    "socket.io",
+    "connect",
+    "api",
+    "rest"
   ],
   "repository": {
     "type": "git",
     "url": "git://github.com/nkzawa/signal.io.git"
   },
   "scripts": {
-    "test": "make test"
+    "test": "make test",
+    "blanket": {
+      "pattern": "lib",
+      "data-cover-never": "node_modules"
+    }
   },
   "dependencies": {
     "socket.io": "nkzawa/socket.io",
@@ -21,11 +31,14 @@
   },
   "devDependencies": {
     "socket.io-client": "nkzawa/socket.io-client",
-    "cookie-signature": "1.0.1",
+    "cookie-signature": "*",
     "git-scripts": "*",
     "mocha": "*",
     "chai": "*",
-    "async": "*"
+    "async": "*",
+    "blanket": "*",
+    "coveralls": "*",
+    "mocha-lcov-reporter": "*"
   },
   "git": {
     "scripts": {

@@ -7,14 +7,17 @@ test:
 		--reporter $(REPORTER) \
 		$(MOCHA_OPTS)
 
-test-cov: lib-cov
-	@SIGNALIO_COV=1 $(MAKE) test REPORTER=html-cov > coverage.html
+test-cov:
+	@$(MAKE) test \
+		REPORTER=html-cov \
+		MOCHA_OPTS="--require blanket" > coverage.html
 
-lib-cov:
-	@jscoverage lib lib-cov
+test-coveralls:
+	@$(MAKE) test \
+		REPORTER=mocha-lcov-reporter \
+		MOCHA_OPTS="--require blanket" | ./node_modules/.bin/coveralls
 
 clean:
 	rm -f coverage.html
-	rm -fr lib-cov
 
 .PHONY: test clean
