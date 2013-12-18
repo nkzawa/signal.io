@@ -36,9 +36,8 @@
     "mocha": "*",
     "chai": "*",
     "async": "*",
-    "blanket": "*",
-    "coveralls": "*",
-    "mocha-lcov-reporter": "*"
+    "istanbul": "*",
+    "coveralls": "*"
   },
   "git": {
     "scripts": {
