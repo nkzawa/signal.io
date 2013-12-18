@@ -16,7 +16,7 @@ test-cov:
 
 test-coveralls:
 	@$(MAKE) test-cov ISTANBUL_OPTS="--report lcovonly" && \
-		cat ./coverage/lcov.info | ./node_modules/.bin/coveralls --verbose
+		cat ./coverage/lcov.info | ./node_modules/.bin/coveralls
 
 clean:
 	rm -rf ./coverage
